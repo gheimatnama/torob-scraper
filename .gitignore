@@ -1,0 +1,4 @@
+torobSpider
+*.db
+*.json
+.idea
