@@ -11,9 +11,6 @@ func ParseFromUrl(url string) *Product {
 		log.Error("Error while parsing product : " + url + " -- ", err)
 	}
 	product.MoreInfoUrl = CleanProductUrl(product.MoreInfoUrl)
-	if len(product.ProductsInfo.Result) > 20 {
-		product.ProductsInfo.Result = product.ProductsInfo.Result[:20]
-	}
 	log.Info("Product " + product.RandomKey + " parsed!")
 	return &product
 }

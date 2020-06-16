@@ -19,9 +19,6 @@ func SearchByQuery(query string) []SearchItem {
 		log.Error("Error while searching query : " + query + " -- ", err)
 	}
 	results := searchResult.Results
-	if len(results) > 5 {
-		return results[:5]
-	}
 	return results
 }
 
