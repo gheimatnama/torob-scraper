@@ -5,10 +5,14 @@ import (
 	log "github.com/sirupsen/logrus"
 	"strings"
 	"sync"
+	//"time"
 )
 
-func getSourceDirectUrl(source ProductSource) (string, error) {
-	data, err := getText(source.PageUrl)
+func getSourceDirectUrl(source ProductSource)  (string, error) {
+	url := source.PageUrl
+	url = url[:strings.Index(url, "&")]
+	url = url + "&source=next_pwa&uid=&discover_method=direct_next_pwa&experiment="
+	data, err := getText(url)
 	if err != nil {
 		return "", err
 	}
@@ -56,6 +60,7 @@ func FillProductSources(product *Product) {
 		wg.Add(1)
 		go func(source *ProductSource, wg *sync.WaitGroup) {
 			defer wg.Done()
+			//time.Sleep(200 * time.Millisecond)
 			directUrl, err := getSourceDirectUrl(*productSource)
 			if err == nil {
 				productSource.DirectPageUrl = directUrl

@@ -11,6 +11,7 @@ import (
 	"time"
 )
 
+var UAs = []string{"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36","Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:77.0) Gecko/20100101 Firefox/77.0","Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36","Mozilla/5.0 (iPhone; CPU iPhone OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"}
 var cookieJar, _ = cookiejar.New(nil)
 var myClient = &http.Client{
 	Timeout: 10 * time.Second,
@@ -19,12 +20,12 @@ var myClient = &http.Client{
 
 func getJson(url string, target interface{}) error {
 	CurrentRuntimeInfo.WorkerPool <- 1
-	time.Sleep(time.Duration(rand.Intn(500) + 1000)* time.Millisecond)
 	defer func() {
 		<-CurrentRuntimeInfo.WorkerPool
 	}()
+	time.Sleep(time.Duration(rand.Intn(5) + 1) * time.Second)
 	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:77.0) Gecko/20100101 Firefox/77.0")
+	req.Header.Set("User-Agent", UAs[rand.Intn(3)])
 	r, err := myClient.Do(req)
 	if err != nil {
 		return err
@@ -71,12 +72,13 @@ func GetQueryParam(address string, param string) []string {
 
 func getText(url string) (string, error) {
 	CurrentRuntimeInfo.WorkerPool <- 1
-	time.Sleep(time.Duration(rand.Intn(2000) + 1000)* time.Millisecond)
 	defer func() {
 		<-CurrentRuntimeInfo.WorkerPool
 	}()
+	time.Sleep(time.Duration(rand.Intn(12) + 3) * time.Second)
+
 	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:77.0) Gecko/20100101 Firefox/77.0")
+	req.Header.Set("User-Agent", UAs[rand.Intn(3)])
 	r, err := myClient.Do(req)
 	if err != nil {
 		return "", err

@@ -4,6 +4,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"net/url"
 	"sync"
+	"bufio"
+	"math/rand"
+	"os"
 )
 
 func getSearchUrl(query string) string {
@@ -35,8 +38,34 @@ func ParseAndPersistSearchProducts(items []SearchItem) {
 	wg.Wait()
 }
 
+func HumanizeBot() {
+	var urls = make([]string, 0)
+	file, err := os.Open("fakeurls.txt")
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer file.Close()
+
+    scanner := bufio.NewScanner(file)
+    for scanner.Scan() {
+        urls = append(urls, scanner.Text())
+    }
+
+    if err := scanner.Err(); err != nil {
+        log.Fatal(err)
+    }
+
+		for {
+			log.Info("WAIIIIITIINIGNINIGN")
+			url := urls[rand.Intn(len(urls) - 1)]
+			getText(url)
+			log.Info("SENT FAKE REQUEST " + url)
+		}
+}
+
 func SearchAndPersist(queries []string) {
 	var wg sync.WaitGroup
+	//go HumanizeBot()
 	log.Info("Starting with ", CurrentRuntimeInfo.MaxRunningWorkers, " workers!")
 	for _, query := range queries {
 		wg.Add(1)

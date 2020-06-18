@@ -7,6 +7,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"io/ioutil"
 	"torobSpider/torob"
+	//"os"
 )
 
 const MaxRunningWorkers = 10
@@ -41,6 +42,7 @@ func main() {
 		panic("failed to connect database")
 	}
 	defer db.Close()
+	//os.Setenv("https_proxy", "http://194.5.206.111:8081/")
 	db.AutoMigrate(&torob.Product{})
 	db.AutoMigrate(&torob.ProductSource{})
 	torob.CurrentRuntimeInfo.DB = db
