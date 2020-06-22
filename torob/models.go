@@ -20,6 +20,7 @@ type (
 		WorkerPool chan int
 		DB *gorm.DB
 		QueriesFile string
+		SearchResultLimit int
 	}
 
 	ProductSource struct {

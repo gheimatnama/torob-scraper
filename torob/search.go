@@ -13,7 +13,7 @@ import (
 func getSearchUrl(query string) string {
 	return "https://api.torob.com/v4/base-product/search/?q="+
 		url.QueryEscape(query) +
-		"&sort=popularity&page=0&size=24&source=next_pwa";
+		"&sort=popularity&page=0&size=24&source=next_pwa"
 }
 
 func SearchByQuery(query string) []SearchItem {
@@ -23,6 +23,9 @@ func SearchByQuery(query string) []SearchItem {
 		log.Error("Error while searching query : " + query + " -- ", err)
 	}
 	results := searchResult.Results
+	if len(results) > CurrentRuntimeInfo.SearchResultLimit {
+		results = searchResult.Results[0:CurrentRuntimeInfo.SearchResultLimit]
+	}
 	return results
 }
 

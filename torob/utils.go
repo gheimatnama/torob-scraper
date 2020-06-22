@@ -80,7 +80,7 @@ func getText(url string) (string, error) {
 	defer func() {
 		<-CurrentRuntimeInfo.WorkerPool
 	}()
-	time.Sleep((time.Duration(rand.Intn(7)) + 2) * time.Second)
+	time.Sleep((time.Duration(rand.Intn(5)) + 2) * time.Second)
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Set("User-Agent", UAs[rand.Intn(3)])
 	r, err := myClient.Do(req)
@@ -96,6 +96,7 @@ func getText(url string) (string, error) {
 }
 
 func getFakeText(url string) (string, error) {
+	time.Sleep((time.Duration(rand.Intn(7)) + 2) * time.Second)
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Set("User-Agent", UAs[rand.Intn(3)])
 	r, err := myClient.Do(req)

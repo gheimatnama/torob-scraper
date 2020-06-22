@@ -10,10 +10,9 @@ import (
 	//"os"
 )
 
-const MaxRunningWorkers = 10
 
 func GetWorkersCount() *int {
-	return flag.Int("workers", 10, "Total workers to scrape pages and images")
+	return flag.Int("workers", 1, "Total workers to scrape pages and images")
 }
 
 func GetQueriesFile() *string {
@@ -42,7 +41,6 @@ func main() {
 		panic("failed to connect database")
 	}
 	defer db.Close()
-	//os.Setenv("https_proxy", "http://194.5.206.111:8081/")
 	db.AutoMigrate(&torob.Product{})
 	db.AutoMigrate(&torob.ProductSource{})
 	torob.CurrentRuntimeInfo.DB = db
