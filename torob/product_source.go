@@ -5,6 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"strings"
 	"sync"
+	//"fmt"
 	//"time"
 )
 
@@ -60,7 +61,6 @@ func FillProductSources(product *Product) {
 		wg.Add(1)
 		go func(source *ProductSource, wg *sync.WaitGroup) {
 			defer wg.Done()
-			//time.Sleep(200 * time.Millisecond)
 			directUrl, err := getSourceDirectUrl(*productSource)
 			if err == nil {
 				productSource.DirectPageUrl = directUrl

@@ -18,12 +18,17 @@ var myClient = &http.Client{
 	Jar: cookieJar,
 }
 
+func DeleteCookie() {
+	cookieJar, _ = cookiejar.New(nil)
+}
+
 func getJson(url string, target interface{}) error {
 	CurrentRuntimeInfo.WorkerPool <- 1
 	defer func() {
 		<-CurrentRuntimeInfo.WorkerPool
 	}()
-	time.Sleep(time.Duration(rand.Intn(5) + 1) * time.Second)
+	time.Sleep((time.Duration(rand.Intn(5)) + 1) * time.Second)
+
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Set("User-Agent", UAs[rand.Intn(3)])
 	r, err := myClient.Do(req)
@@ -75,8 +80,22 @@ func getText(url string) (string, error) {
 	defer func() {
 		<-CurrentRuntimeInfo.WorkerPool
 	}()
-	time.Sleep(time.Duration(rand.Intn(12) + 3) * time.Second)
+	time.Sleep((time.Duration(rand.Intn(7)) + 2) * time.Second)
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Set("User-Agent", UAs[rand.Intn(3)])
+	r, err := myClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer r.Body.Close()
+	data, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
+}
 
+func getFakeText(url string) (string, error) {
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Set("User-Agent", UAs[rand.Intn(3)])
 	r, err := myClient.Do(req)

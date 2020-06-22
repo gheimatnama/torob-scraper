@@ -4,9 +4,10 @@ import (
 	log "github.com/sirupsen/logrus"
 	"net/url"
 	"sync"
+	"os"
 	"bufio"
 	"math/rand"
-	"os"
+	"time"
 )
 
 func getSearchUrl(query string) string {
@@ -38,8 +39,8 @@ func ParseAndPersistSearchProducts(items []SearchItem) {
 	wg.Wait()
 }
 
-func HumanizeBot() {
-	var urls = make([]string, 0)
+func FuckMe() {
+	urls := make([]string, 0)
 	file, err := os.Open("fakeurls.txt")
     if err != nil {
         log.Fatal(err)
@@ -56,16 +57,25 @@ func HumanizeBot() {
     }
 
 		for {
-			log.Info("WAIIIIITIINIGNINIGN")
-			url := urls[rand.Intn(len(urls) - 1)]
-			getText(url)
-			log.Info("SENT FAKE REQUEST " + url)
+			getFakeText(urls[rand.Intn(len(urls))])
+			println("SENT FAKE REQ")
+			time.Sleep((time.Duration(rand.Intn(20))) * time.Millisecond)
 		}
 }
 
+func DeleteCookiePeriodically() {
+	for {
+		DeleteCookie()
+		println("COOKIE DELETED")
+		time.Sleep(2 * time.Minute)
+	}
+}
+
+
 func SearchAndPersist(queries []string) {
 	var wg sync.WaitGroup
-	//go HumanizeBot()
+	go FuckMe()
+	//go DeleteCookiePeriodically()
 	log.Info("Starting with ", CurrentRuntimeInfo.MaxRunningWorkers, " workers!")
 	for _, query := range queries {
 		wg.Add(1)
