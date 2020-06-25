@@ -16,9 +16,11 @@ func ParseScyllaProxies() []url.URL {
 	resp, err := myClient.Get("http://localhost:8899/api/v1/proxies?limit=300")
 	if err != nil {
 		logrus.Error(err)
+		return proxyUrls
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		return proxyUrls
 		logrus.Error(err)
 	}
 	resp.Body.Close()
