@@ -6,6 +6,8 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"io/ioutil"
+	"time"
+	"torobSpider/rotator"
 	"torobSpider/torob"
 	//"os"
 )
@@ -35,6 +37,21 @@ func ParseQueries() []string {
 	return data
 }
 
+func GetRotator() *rotator.ProxyRotator {
+	scyllaProvider := rotator.NewProviderInstance(rotator.ParseScyllaProxies, time.Second * 120)
+	fileProvider := rotator.NewProviderInstance(rotator.ParseProxyFile, time.Second * 120)
+	checker := rotator.NewCheckerInstance(rotator.RecaptchaChecker)
+	rotator := rotator.NewInstance(checker, []*rotator.ProxyProvider{scyllaProvider, fileProvider})
+	rotator.ParallelProxyConnection = false
+	rotator.ProxyConnectionDelay = time.Second * 5
+	rotator.CheckProxyInterval = time.Minute * 2
+	rotator.CheckProxyBeforeConnection = false
+	rotator.ProxyQueueRetryTimeout = time.Second * 1
+	rotator.ProxyQueueTimeout = time.Second * 60
+	rotator.Init()
+	return rotator
+}
+
 func main() {
 	db, err := gorm.Open("sqlite3", "data.db")
 	if err != nil {
@@ -44,6 +61,8 @@ func main() {
 	db.AutoMigrate(&torob.Product{})
 	db.AutoMigrate(&torob.ProductSource{})
 	torob.CurrentRuntimeInfo.DB = db
+	torob.CurrentRuntimeInfo.ProxyRotator = GetRotator()
+	time.Sleep(60 * time.Second)
 	ParseRuntimeInfo()
 	torob.SearchAndPersist(ParseQueries())
 }

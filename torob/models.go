@@ -1,7 +1,9 @@
 package torob
 
-import "github.com/jinzhu/gorm"
-
+import (
+	"github.com/jinzhu/gorm"
+	"torobSpider/rotator"
+)
 type (
 	SearchItem struct {
 		ImageUrl string `gorm:"primary_key" json:"image_url"`
@@ -21,6 +23,7 @@ type (
 		DB *gorm.DB
 		QueriesFile string
 		SearchResultLimit int
+		ProxyRotator *rotator.ProxyRotator
 	}
 
 	ProductSource struct {
