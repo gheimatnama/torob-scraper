@@ -62,7 +62,7 @@ func main() {
 	db.AutoMigrate(&torob.ProductSource{})
 	torob.CurrentRuntimeInfo.DB = db
 	torob.CurrentRuntimeInfo.ProxyRotator = GetRotator()
-	time.Sleep(10 * time.Second)
+	time.Sleep(30 * time.Second)
 	ParseRuntimeInfo()
 	torob.SearchAndPersist(ParseQueries())
 }
