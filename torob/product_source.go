@@ -2,6 +2,7 @@ package torob
 
 import (
 	"errors"
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"strings"
 	"sync"
@@ -83,13 +84,18 @@ func DownloadProductSource(productSource *ProductSource) {
 func ReDownloadFailedSources() {
 	sources := ListFailedSources()
 	log.Info("Found ", len(sources), " failed sources")
+	var wg sync.WaitGroup
 	for _, source := range sources {
-		go func(productSource *ProductSource) {
+		fmt.Println(source.ID)
+		wg.Add(1)
+		go func(productSource *ProductSource, w *sync.WaitGroup) {
+			defer wg.Done()
 			DownloadProductSource(productSource)
 			UpdateProductSource(productSource)
 			if productSource.DirectPageUrl != "" {
 				log.Info("Source ", productSource.ID, " updated")
 			}
-		}(&source)
+		}(&source, &wg)
 	}
+	wg.Wait()
 }
