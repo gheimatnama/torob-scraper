@@ -30,7 +30,7 @@ func SourceExists(product *Product, source *ProductSource) bool {
 
 func ListFailedSources() []ProductSource {
 	var failedSources []ProductSource
-	CurrentRuntimeInfo.DB.Where("id_in_source = ?", "").Find(&failedSources)
+	CurrentRuntimeInfo.DB.Where("direct_page_url = ?", "").Find(&failedSources)
 	return failedSources
 }
 
