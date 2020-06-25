@@ -47,7 +47,7 @@ func (proxy *Proxy) BeenCheckedSince(duration time.Duration) bool {
 }
 
 func NewInstance(proxyChecker *ProxyChecker, providers []*ProxyProvider) *ProxyRotator {
-	return &ProxyRotator{providers: providers, proxyChecker : proxyChecker, checkerPool: make(chan int, 10)}
+	return &ProxyRotator{providers: providers, proxyChecker : proxyChecker, checkerPool: make(chan int, 30)}
 }
 
 func NewProxy(url url.URL) *Proxy {
