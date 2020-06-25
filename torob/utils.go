@@ -2,6 +2,7 @@ package torob
 
 import (
 	b64 "encoding/base64"
+	log "github.com/sirupsen/logrus"
 	"encoding/json"
 	"io/ioutil"
 	"math/rand"
@@ -99,12 +100,25 @@ func getText(url string) (string, error) {
 	req.Header.Set("User-Agent", UAs[rand.Intn(3)])
 	client, proxy := getClient(true)
 	r, err := client.Do(req)
-	if err != nil {
+	retries := 0
+	for err != nil && retries < 3 {
+		retries++
+		log.Error("Proxy server didn't answer")
+		log.Info("Retrying")
+		r, err = client.Do(req)
+	}
+	if retries >= 3 {
 		if proxy != nil {
+			log.Info("Proxy is obviously dead")
 			proxy.MarkDead()
 		}
 		return "", err
 	}
+
+	if retries != 0 {
+		log.Info("Proxy Survived")
+	}
+
 	defer r.Body.Close()
 	data, err := ioutil.ReadAll(r.Body)
 	if err != nil {
