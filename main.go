@@ -47,7 +47,7 @@ func GetRotator() *rotator.ProxyRotator {
 	rotator.CheckProxyInterval = time.Minute * 2
 	rotator.CheckProxyBeforeConnection = false
 	rotator.ProxyQueueRetryTimeout = time.Second * 1
-	rotator.ProxyQueueTimeout = time.Second * 60
+	rotator.ProxyQueueTimeout = time.Minute * 5
 	rotator.Init()
 	return rotator
 }
