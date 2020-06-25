@@ -23,8 +23,10 @@ func getClient(useProxy bool) (*http.Client, *rotator.Proxy) {
 	}
 	if useProxy {
 		proxy := CurrentRuntimeInfo.ProxyRotator.GetProxySync()
-		client.Transport = &http.Transport{Proxy: http.ProxyURL(&proxy.Url)}
-		return client, proxy
+		if proxy != nil {
+			client.Transport = &http.Transport{Proxy: http.ProxyURL(&proxy.Url)}
+			return client, proxy
+		}
 	}
 	return client, nil
 }

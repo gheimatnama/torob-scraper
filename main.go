@@ -47,7 +47,7 @@ func GetRotator() *rotator.ProxyRotator {
 	rotator.CheckProxyInterval = time.Minute * 2
 	rotator.CheckProxyBeforeConnection = false
 	rotator.ProxyQueueRetryTimeout = time.Second * 1
-	rotator.ProxyQueueTimeout = time.Second * 60
+	rotator.ProxyQueueTimeout = time.Minute * 5
 	rotator.Init()
 	return rotator
 }
@@ -62,7 +62,7 @@ func main() {
 	db.AutoMigrate(&torob.ProductSource{})
 	torob.CurrentRuntimeInfo.DB = db
 	torob.CurrentRuntimeInfo.ProxyRotator = GetRotator()
-	time.Sleep(30 * time.Second)
+	time.Sleep(120 * time.Second)
 	ParseRuntimeInfo()
 	torob.SearchAndPersist(ParseQueries())
 }
