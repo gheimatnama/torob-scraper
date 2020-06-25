@@ -64,5 +64,6 @@ func main() {
 	torob.CurrentRuntimeInfo.ProxyRotator = GetRotator()
 	time.Sleep(60 * time.Second)
 	ParseRuntimeInfo()
+	torob.ReDownloadFailedSources()
 	torob.SearchAndPersist(ParseQueries())
 }

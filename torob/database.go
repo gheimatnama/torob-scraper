@@ -26,3 +26,14 @@ func SourceExists(product *Product, source *ProductSource) bool {
 	CurrentRuntimeInfo.DB.Model(&ProductSource{}).Where("product_id = ? AND shop_id = ?", product.RandomKey, source.ShopId).Count(&count)
 	return count != 0
 }
+
+
+func ListFailedSources() []ProductSource {
+	var failedSources []ProductSource
+	CurrentRuntimeInfo.DB.Where("id_in_source = ?", "").Find(&failedSources)
+	return failedSources
+}
+
+func UpdateProductSource(productSource *ProductSource) {
+	CurrentRuntimeInfo.DB.Save(productSource)
+}

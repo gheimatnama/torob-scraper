@@ -61,16 +61,33 @@ func FillProductSources(product *Product) {
 		wg.Add(1)
 		go func(source *ProductSource, wg *sync.WaitGroup) {
 			defer wg.Done()
-			directUrl, err := getSourceDirectUrl(*productSource)
-			if err == nil {
-				productSource.DirectPageUrl = directUrl
-				FillIDInSource(productSource)
-				log.Info("Parsed source  ", productSource.DirectPageUrl, " for ", product.RandomKey)
-			} else {
-				log.Error("Error parsing source  ", productSource.PageUrl, " for ", product.RandomKey, " ", err)
-			}
+			DownloadProductSource(source)
 		}(productSource, &wg)
 	}
 	wg.Wait()
 	log.Info("Parsed all sources for ", product.RandomKey)
+}
+
+
+func DownloadProductSource(productSource *ProductSource) {
+	directUrl, err := getSourceDirectUrl(*productSource)
+	if err == nil {
+		productSource.DirectPageUrl = directUrl
+		FillIDInSource(productSource)
+		log.Info("Parsed source  ", productSource.DirectPageUrl, " for ", productSource.ProductID)
+	} else {
+		log.Error("Error parsing source  ", productSource.PageUrl, " for ", productSource.ProductID, " ", err)
+	}
+}
+
+func ReDownloadFailedSources() {
+	sources := ListFailedSources()
+	log.Info("Found ", len(sources), " failed sources")
+	for _, source := range sources {
+		DownloadProductSource(&source)
+		UpdateProductSource(&source)
+		if source.DirectPageUrl != "" {
+			log.Info("Source ", source.ID, " updated")
+		}
+	}
 }
