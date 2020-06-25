@@ -84,12 +84,10 @@ func ReDownloadFailedSources() {
 	sources := ListFailedSources()
 	log.Info("Found ", len(sources), " failed sources")
 	for _, source := range sources {
-		go func(productSource *ProductSource) {
-			DownloadProductSource(productSource)
-			UpdateProductSource(productSource)
-			if productSource.DirectPageUrl != "" {
-				log.Info("Source ", productSource.ID, " updated")
-			}
-		}(&source)
+		DownloadProductSource(&source)
+		UpdateProductSource(&source)
+		if source.DirectPageUrl != "" {
+			log.Info("Source ", source.ID, " updated")
+		}
 	}
 }
