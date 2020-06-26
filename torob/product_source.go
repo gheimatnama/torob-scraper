@@ -85,17 +85,21 @@ func ReDownloadFailedSources() {
 	sources := ListFailedSources()
 	log.Info("Found ", len(sources), " failed sources")
 	var wg sync.WaitGroup
+	pool := make(chan int, 10)
 	for _, source := range sources {
-		fmt.Println(source.ID)
 		wg.Add(1)
+		pool <- 1
 		go func(productSource *ProductSource, w *sync.WaitGroup) {
 			defer wg.Done()
+			fmt.Println("I'm fucking downloading source ", productSource.ID)
 			DownloadProductSource(productSource)
 			UpdateProductSource(productSource)
 			if productSource.DirectPageUrl != "" {
 				log.Info("Source ", productSource.ID, " updated")
 			}
+			<- pool
 		}(&source, &wg)
+		fmt.Println("I just created a goroutine for source ", source.ID)
 	}
 	wg.Wait()
 }
