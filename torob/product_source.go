@@ -48,11 +48,24 @@ func FillIDInSource(source *ProductSource) {
 	}
 }
 
+func CheckForProductLinkPotential(product *Product) bool {
+	for index := range product.ProductsInfo.Result {
+		if product.ProductsInfo.Result[index].ShopId == 10 || product.ProductsInfo.Result[index].ShopName == "دیجیکالا" {
+			return true
+		}
+	}
+	return false
+}
+
 func FillProductSources(product *Product) {
 	if product.ProductsInfo.Result == nil {
 		return
 	}
 	var wg sync.WaitGroup
+	if !CheckForProductLinkPotential(product) {
+		log.Info("Parsing product", product.RandomKey ,"with no linkability skipped")
+		return
+	}
 	log.Info("Found ", len(product.ProductsInfo.Result), " sources for ", product.RandomKey)
 	for index := range product.ProductsInfo.Result {
 		productSource := &product.ProductsInfo.Result[index]
