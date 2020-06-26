@@ -21,13 +21,19 @@ func GetQueriesFile() *string {
 	return flag.String("queries", "queries.json", "Json array file containing all queries")
 }
 
+func OnlyRepairDownloadedSources() *bool {
+	return flag.Bool("repair", false, "Only repair already downloaded sources")
+}
+
 func ParseRuntimeInfo() {
 	workersCount := GetWorkersCount()
 	queriesFile := GetQueriesFile()
+	onlyRepair := OnlyRepairDownloadedSources()
 	flag.Parse()
 	torob.CurrentRuntimeInfo.MaxRunningWorkers = *workersCount
 	torob.CurrentRuntimeInfo.WorkerPool = make(chan int, *workersCount)
 	torob.CurrentRuntimeInfo.QueriesFile = *queriesFile
+	torob.CurrentRuntimeInfo.OnlyRepairDownloadedSources = *onlyRepair
 }
 
 func ParseQueries() []string {
@@ -48,7 +54,6 @@ func GetRotator() *rotator.ProxyRotator {
 	rotator.CheckProxyBeforeConnection = false
 	rotator.ProxyQueueRetryTimeout = time.Second * 1
 	rotator.ProxyQueueTimeout = time.Minute * 5
-	rotator.Init()
 	return rotator
 }
 
@@ -62,7 +67,7 @@ func main() {
 	db.AutoMigrate(&torob.ProductSource{})
 	torob.CurrentRuntimeInfo.DB = db
 	torob.CurrentRuntimeInfo.ProxyRotator = GetRotator()
-	time.Sleep(5 * time.Second)
+	torob.CurrentRuntimeInfo.ProxyRotator.Init(30)
 	ParseRuntimeInfo()
 	//torob.ReDownloadFailedSources()
 	torob.SearchAndPersist(ParseQueries())
