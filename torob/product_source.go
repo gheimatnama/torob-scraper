@@ -2,7 +2,6 @@ package torob
 
 import (
 	"errors"
-	"fmt"
 	log "github.com/sirupsen/logrus"
 	"strings"
 	"sync"
@@ -85,21 +84,19 @@ func ReDownloadFailedSources() {
 	sources := ListFailedSources()
 	log.Info("Found ", len(sources), " failed sources")
 	var wg sync.WaitGroup
-	pool := make(chan int, 10)
+	pool := make(chan int, 30)
 	for _, source := range sources {
 		wg.Add(1)
 		pool <- 1
-		go func(productSource *ProductSource, w *sync.WaitGroup) {
+		go func(source ProductSource, w *sync.WaitGroup) {
 			defer wg.Done()
-			fmt.Println("I'm fucking downloading source ", productSource.ID)
-			DownloadProductSource(productSource)
-			UpdateProductSource(productSource)
-			if productSource.DirectPageUrl != "" {
-				log.Info("Source ", productSource.ID, " updated")
+			DownloadProductSource(&source)
+			UpdateProductSource(&source)
+			if source.DirectPageUrl != "" {
+				log.Info("Source ", source.ID, " updated")
 			}
 			<- pool
-		}(&source, &wg)
-		fmt.Println("I just created a goroutine for source ", source.ID)
+		}(source, &wg)
 	}
 	wg.Wait()
 }
