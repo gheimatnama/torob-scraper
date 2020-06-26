@@ -34,9 +34,11 @@ func ParseAndPersistSearchProducts(items []SearchItem) {
 	var wg sync.WaitGroup
 	for _, item := range items {
 		wg.Add(1)
+		CurrentRuntimeInfo.MaxParallelProductPerSearch <- 1
 		go func(url string, wg *sync.WaitGroup) {
 			defer wg.Done()
 			ParseProductAndPersist(url)
+			<- CurrentRuntimeInfo.MaxParallelProductPerSearch
 		}(item.MoreInfoUrl, &wg)
 	}
 	wg.Wait()
@@ -66,22 +68,14 @@ func FuckMe() {
 		}
 }
 
-func DeleteCookiePeriodically() {
-	for {
-		DeleteCookie()
-		println("COOKIE DELETED")
-		time.Sleep(2 * time.Minute)
-	}
-}
-
-
 func SearchAndPersist(queries []string) {
 	var wg sync.WaitGroup
 	go FuckMe()
-	//go DeleteCookiePeriodically()
 	log.Info("Starting with ", CurrentRuntimeInfo.MaxRunningWorkers, " workers!")
+
 	for _, query := range queries {
 		wg.Add(1)
+		CurrentRuntimeInfo.MaxParallelSearch <- 1
 		go func(query string, wg *sync.WaitGroup) {
 			defer wg.Done()
 			log.Info("Searching " + query)
@@ -89,6 +83,7 @@ func SearchAndPersist(queries []string) {
 			log.Info("Found ", len(items), " results for " + query)
 			ParseAndPersistSearchProducts(items)
 			log.Info("Persisted all results for search query : " + query)
+			<- CurrentRuntimeInfo.MaxParallelSearch
 		}(query, &wg)
 	}
 	wg.Wait()

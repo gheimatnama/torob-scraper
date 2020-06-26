@@ -1,6 +1,7 @@
 package rotator
 
 import (
+	"fmt"
 	"github.com/sirupsen/logrus"
 	"net/url"
 	"sort"
@@ -77,9 +78,14 @@ func (proxyRotator *ProxyRotator) addProxies(urls []url.URL)  {
 }
 
 
-func (proxyRotator *ProxyRotator) Init() {
+func (proxyRotator *ProxyRotator) Init(minimumAvailableProxies int) {
 	proxyRotator.initializeProviders()
 	proxyRotator.initializeProxyChecker()
+	for minimumAvailableProxies >= proxyRotator.TotalAliveProxies() {
+		fmt.Print("Current available proxies : ", proxyRotator.TotalAliveProxies(), "\r")
+		time.Sleep(200 * time.Millisecond)
+	}
+	logrus.Info("Proxy pool reached required conditions")
 }
 
 func (proxyRotator *ProxyRotator) initializeProviders()  {

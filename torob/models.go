@@ -20,9 +20,12 @@ type (
 	RuntimeInfo struct {
 		MaxRunningWorkers int
 		WorkerPool chan int
+		MaxParallelProductPerSearch chan int
+		MaxParallelSearch chan int
 		DB *gorm.DB
 		QueriesFile string
 		SearchResultLimit int
+		OnlyRepairDownloadedSources bool
 		ProxyRotator *rotator.ProxyRotator
 	}
 
