@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/sirupsen/logrus"
 	"time"
 	"torobSpider/rotator"
