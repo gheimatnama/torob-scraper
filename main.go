@@ -4,6 +4,7 @@ import (
 	"flag"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/sirupsen/logrus"
 	"time"
 	"torobSpider/rotator"
 	"torobSpider/torob"
