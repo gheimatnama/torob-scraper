@@ -89,15 +89,17 @@ func (proxyRotator *ProxyRotator) Init(minimumAvailableProxies int) {
 }
 
 func (proxyRotator *ProxyRotator) initializeProviders()  {
-	for _, prv := range proxyRotator.providers {
-		go func(proxyRotator *ProxyRotator, provider *ProxyProvider) {
-			for {
-				urls := provider.Provider()
-				proxyRotator.addProxies(urls)
-				time.Sleep(provider.RefreshRate)
-			}
-		} (proxyRotator, prv)
-	}
+	go func() {
+		for _, prv := range proxyRotator.providers {
+			go func(proxyRotator *ProxyRotator, provider *ProxyProvider) {
+				for {
+					urls := provider.Provider()
+					proxyRotator.addProxies(urls)
+					time.Sleep(provider.RefreshRate)
+				}
+			} (proxyRotator, prv)
+		}
+	}()
 }
 
 
