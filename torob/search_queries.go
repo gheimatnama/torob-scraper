@@ -9,7 +9,7 @@ import (
 
 // Returns search queries and last available page
 func ParseSearchQueries(page int) ([]SearchQuery, int) {
-	log.Info("Parsing titles page 1")
+	log.Info("Parsing titles page ", page)
 	pagination := Pagination{}
 	var queries []SearchQuery
 	err := getJson(fmt.Sprintf("https://gheimatnama.ir/products/listNames?page=%d", page), &pagination)
