@@ -58,7 +58,7 @@ func GetRotator() *rotator.ProxyRotator {
 }
 
 func main() {
-	db, err := gorm.Open("sqlite3", "data.db")
+	db, err := gorm.Open("mysql", "root:root@/torobspider?charset=utf8mb4&parseTime=True&loc=Local")
 	if err != nil {
 		panic("failed to connect database")
 	}

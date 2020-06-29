@@ -57,7 +57,7 @@ type (
 		SearchItem
 		ProductsInfo ProductsInfo `json:"products_info" gorm:"-"`
 	}
-	
+
 	SearchResult struct {
 		Results []SearchItem `json:"results"`
 	}
