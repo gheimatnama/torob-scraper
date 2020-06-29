@@ -40,7 +40,7 @@ func getJson(url string, target interface{}) error {
 
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Set("User-Agent", UAs[rand.Intn(3)])
-	client, proxy := getClient(false)
+	client, proxy := getClient(true)
 	r, err := client.Do(req)
 	if err != nil {
 		if proxy != nil {
