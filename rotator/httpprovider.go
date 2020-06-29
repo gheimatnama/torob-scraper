@@ -18,12 +18,12 @@ func ParseScyllaProxies() []url.URL {
 		logrus.Error(err)
 		return proxyUrls
 	}
+	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return proxyUrls
 		logrus.Error(err)
 	}
-	resp.Body.Close()
 	var responseJson map[string]interface{}
 	json.Unmarshal(body, &responseJson)
 	proxies := responseJson["proxies"].([]interface{})
