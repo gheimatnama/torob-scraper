@@ -24,15 +24,21 @@ func OnlyRepairDownloadedSources() *bool {
 	return flag.Bool("repair", false, "Only repair already downloaded sources")
 }
 
+func GetMinimumRequiredAliveProxy() *int {
+	return flag.Int("required-proxies", 50, "Minimum required proxies to start")
+}
+
 func ParseRuntimeInfo() {
 	workersCount := GetWorkersCount()
 	queriesFile := GetQueriesFile()
 	onlyRepair := OnlyRepairDownloadedSources()
+	requiredProxies := GetMinimumRequiredAliveProxy()
 	flag.Parse()
 	torob.CurrentRuntimeInfo.MaxRunningWorkers = *workersCount
 	torob.CurrentRuntimeInfo.WorkerPool = make(chan int, *workersCount)
 	torob.CurrentRuntimeInfo.QueriesFile = *queriesFile
 	torob.CurrentRuntimeInfo.OnlyRepairDownloadedSources = *onlyRepair
+	torob.CurrentRuntimeInfo.MinimumRequiredAliveProxy = *requiredProxies
 }
 
 func GetRotator() *rotator.ProxyRotator {
@@ -62,9 +68,8 @@ func main() {
 	db.AutoMigrate(&torob.SearchQuery{})
 	torob.CurrentRuntimeInfo.DB = db
 	torob.CurrentRuntimeInfo.ProxyRotator = GetRotator()
-	requiredAliveProxies := 50
-	logrus.Info("Looking for ", requiredAliveProxies, " alive proxies before start")
-	torob.CurrentRuntimeInfo.ProxyRotator.Init(requiredAliveProxies)
+	logrus.Info("Looking for ", torob.CurrentRuntimeInfo.MinimumRequiredAliveProxy, " alive proxies before start")
+	torob.CurrentRuntimeInfo.ProxyRotator.Init(torob.CurrentRuntimeInfo.MinimumRequiredAliveProxy)
 	ParseRuntimeInfo()
 	if torob.CurrentRuntimeInfo.OnlyRepairDownloadedSources {
 		torob.ReDownloadFailedSources()

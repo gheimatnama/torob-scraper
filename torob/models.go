@@ -25,6 +25,7 @@ type (
 		MaxParallelSearch chan int
 		DB *gorm.DB
 		QueriesFile string
+		MinimumRequiredAliveProxy int
 		SearchResultLimit int
 		OnlyRepairDownloadedSources bool
 		ProxyRotator *rotator.ProxyRotator
