@@ -2,6 +2,7 @@ package torob
 
 import (
 	"github.com/jinzhu/gorm"
+	"time"
 	"torobSpider/rotator"
 )
 type (
@@ -27,6 +28,26 @@ type (
 		SearchResultLimit int
 		OnlyRepairDownloadedSources bool
 		ProxyRotator *rotator.ProxyRotator
+	}
+
+	SearchQuery struct {
+		ProductID int `gorm:"primary_key" json:"id"`
+		Title string `json:"title"`
+		CreatedAt time.Time
+	}
+
+	Pagination struct {
+		CurrentPage int `json:"current_page"`
+		Data []interface{} `json:"data"`
+		FirstPageUrl string `json:"first_page_url"`
+		NextPageUrl string `json:"next_page_url"`
+		PrevPageUrl string `json:"prev_page_url"`
+		LastPageUrl string `json:"last_page_url"`
+		From int `json:"from"`
+		LastPage int `json:"last_page"`
+		PerPage int `json:"per_page"`
+		To int `json:"to"`
+		Total int `json:"total"`
 	}
 
 	ProductSource struct {

@@ -31,10 +31,6 @@ func getClient(useProxy bool) (*http.Client, *rotator.Proxy) {
 	return client, nil
 }
 
-func DeleteCookie() {
-	cookieJar, _ = cookiejar.New(nil)
-}
-
 func getJson(url string, target interface{}) error {
 	CurrentRuntimeInfo.WorkerPool <- 1
 	defer func() {

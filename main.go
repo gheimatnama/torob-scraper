@@ -1,11 +1,10 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"io/ioutil"
+	"github.com/sirupsen/logrus"
 	"time"
 	"torobSpider/rotator"
 	"torobSpider/torob"
@@ -36,16 +35,9 @@ func ParseRuntimeInfo() {
 	torob.CurrentRuntimeInfo.OnlyRepairDownloadedSources = *onlyRepair
 }
 
-func ParseQueries() []string {
-	plan, _ := ioutil.ReadFile(torob.CurrentRuntimeInfo.QueriesFile)
-	var data []string
-	json.Unmarshal(plan, &data)
-	return data
-}
-
 func GetRotator() *rotator.ProxyRotator {
-	scyllaProvider := rotator.NewProviderInstance(rotator.ParseScyllaProxies, time.Second * 120)
-	fileProvider := rotator.NewProviderInstance(rotator.ParseProxyFile, time.Second * 120)
+	scyllaProvider := rotator.NewProviderInstance(rotator.ParseScyllaProxies, time.Minute * 2)
+	fileProvider := rotator.NewProviderInstance(rotator.ParseProxyFile, time.Minute * 2)
 	checker := rotator.NewCheckerInstance(rotator.RecaptchaChecker)
 	rotator := rotator.NewInstance(checker, []*rotator.ProxyProvider{scyllaProvider, fileProvider})
 	rotator.ParallelProxyConnection = false
@@ -57,6 +49,7 @@ func GetRotator() *rotator.ProxyRotator {
 	return rotator
 }
 
+
 func main() {
 	db, err := gorm.Open("sqlite3", "data.db")
 	if err != nil {
@@ -65,10 +58,16 @@ func main() {
 	defer db.Close()
 	db.AutoMigrate(&torob.Product{})
 	db.AutoMigrate(&torob.ProductSource{})
+	db.AutoMigrate(&torob.SearchQuery{})
 	torob.CurrentRuntimeInfo.DB = db
 	torob.CurrentRuntimeInfo.ProxyRotator = GetRotator()
-	torob.CurrentRuntimeInfo.ProxyRotator.Init(30)
+	requiredAliveProxies := 50
+	logrus.Info("Looking for ", requiredAliveProxies, " alive proxies before start")
+	torob.CurrentRuntimeInfo.ProxyRotator.Init(requiredAliveProxies)
 	ParseRuntimeInfo()
-	//torob.ReDownloadFailedSources()
-	torob.SearchAndPersist(ParseQueries())
+	if torob.CurrentRuntimeInfo.OnlyRepairDownloadedSources {
+		torob.ReDownloadFailedSources()
+	} else {
+		torob.ParseQueriesAndSearch()
+	}
 }

@@ -14,9 +14,26 @@ func PersistProduct(product *Product) {
 }
 
 
+func PersistSearchQuery(query *SearchQuery) {
+	CurrentRuntimeInfo.DB.Save(query)
+}
+
+func PersistSearchQueries(queries []SearchQuery) {
+	for _, query := range queries {
+		PersistSearchQuery(&query)
+	}
+}
+
 func ProductExistsByID(ID string) bool {
 	count := 0
 	CurrentRuntimeInfo.DB.Model(&Product{}).Where("random_key = ?", ID).Count(&count)
+	return count != 0
+}
+
+
+func SearchQueryExistsByProductID(ID int) bool {
+	count := 0
+	CurrentRuntimeInfo.DB.Model(&SearchQuery{}).Where("product_id = ?", ID).Count(&count)
 	return count != 0
 }
 

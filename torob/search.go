@@ -18,7 +18,7 @@ func getSearchUrl(query string) string {
 
 func SearchByQuery(query string) []SearchItem {
 	searchResult := SearchResult{}
-	err := getJson(getSearchUrl(query), &searchResult);
+	err := getJson(getSearchUrl(query), &searchResult)
 	if err != nil {
 		log.Error("Error while searching query : " + query + " -- ", err)
 	}
@@ -44,7 +44,7 @@ func ParseAndPersistSearchProducts(items []SearchItem) {
 	wg.Wait()
 }
 
-func FuckMe() {
+func RequestFaker() {
 	urls := make([]string, 0)
 	file, err := os.Open("fakeurls.txt")
     if err != nil {
@@ -70,9 +70,6 @@ func FuckMe() {
 
 func SearchAndPersist(queries []string) {
 	var wg sync.WaitGroup
-	go FuckMe()
-	log.Info("Starting with ", CurrentRuntimeInfo.MaxRunningWorkers, " workers!")
-
 	for _, query := range queries {
 		wg.Add(1)
 		CurrentRuntimeInfo.MaxParallelSearch <- 1
@@ -87,5 +84,4 @@ func SearchAndPersist(queries []string) {
 		}(query, &wg)
 	}
 	wg.Wait()
-	log.Info("All done!")
 }

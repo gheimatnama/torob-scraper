@@ -13,7 +13,7 @@ import (
 func ParseScyllaProxies() []url.URL {
 	var proxyUrls []url.URL
 	myClient := &http.Client{Timeout: time.Second * 10}
-	resp, err := myClient.Get("http://localhost:8899/api/v1/proxies?limit=300")
+	resp, err := myClient.Get("http://localhost:8899/api/v1/proxies?limit=500")
 	if err != nil {
 		logrus.Error(err)
 		return proxyUrls
