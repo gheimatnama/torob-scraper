@@ -49,12 +49,13 @@ func filterExistedSearchQueries(queries []SearchQuery) []SearchQuery {
 
 func ParseQueriesAndSearch() {
 	log.Info("Starting with ", CurrentRuntimeInfo.MaxRunningWorkers, " workers!")
-	queries, lastPage := ParseSearchQueries(1)
-	for page := 2; page <= lastPage; page++ {
-		queries := filterExistedSearchQueries(queries)
+	_, lastPage := ParseSearchQueries(1)
+	for page := 1; page <= lastPage; page++ {
+		queries, _ := ParseSearchQueries(page)
+		queries = filterExistedSearchQueries(queries)
+		log.Info("Filtered search queries - only ", len(queries), " are valid")
 		SearchAndPersist(pluckTitleFromSearchQueries(queries))
 		PersistSearchQueries(queries)
-		queries, _ = ParseSearchQueries(page)
 	}
 	log.Info("All done!")
 }

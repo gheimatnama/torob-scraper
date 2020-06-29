@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
-	"github.com/jinzhu/gorm"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 	"time"
 	"torobSpider/rotator"
@@ -25,7 +25,7 @@ func OnlyRepairDownloadedSources() *bool {
 }
 
 func GetMinimumRequiredAliveProxy() *int {
-	return flag.Int("required-proxies", 50, "Minimum required proxies to start")
+	return flag.Int("required-proxies", 10, "Minimum required proxies to start")
 }
 
 func ParseRuntimeInfo() {
@@ -57,6 +57,7 @@ func GetRotator() *rotator.ProxyRotator {
 
 
 func main() {
+	ParseRuntimeInfo()
 	db, err := gorm.Open("mysql", "root:root@/torobspider?charset=utf8mb4&parseTime=True&loc=Local")
 	if err != nil {
 		//log.Fatal(err)
@@ -70,7 +71,6 @@ func main() {
 	torob.CurrentRuntimeInfo.ProxyRotator = GetRotator()
 	logrus.Info("Looking for ", torob.CurrentRuntimeInfo.MinimumRequiredAliveProxy, " alive proxies before start")
 	torob.CurrentRuntimeInfo.ProxyRotator.Init(torob.CurrentRuntimeInfo.MinimumRequiredAliveProxy)
-	ParseRuntimeInfo()
 	if torob.CurrentRuntimeInfo.OnlyRepairDownloadedSources {
 		torob.ReDownloadFailedSources()
 	} else {
