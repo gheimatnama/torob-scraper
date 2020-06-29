@@ -48,7 +48,7 @@ func FillIDInSource(source *ProductSource) {
 	}
 }
 
-func CheckForProductLinkPotential(product *Product) bool {
+func CheckForProductLinkability(product *Product) bool {
 	for index := range product.ProductsInfo.Result {
 		if product.ProductsInfo.Result[index].ShopId == 10 || strings.Contains(product.ProductsInfo.Result[index].ShopName, "دیجیکالا") {
 			return true
@@ -62,7 +62,7 @@ func FillProductSources(product *Product) {
 		return
 	}
 	var wg sync.WaitGroup
-	if !CheckForProductLinkPotential(product) {
+	if !CheckForProductLinkability(product) {
 		log.Info("Parsing product", product.RandomKey ,"with no linkability skipped")
 		return
 	}
