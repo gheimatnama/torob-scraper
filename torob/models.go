@@ -7,15 +7,15 @@ import (
 )
 type (
 	SearchItem struct {
-		ImageUrl string `gorm:"primary_key" json:"image_url"`
+		ImageUrl string `gorm:"primary_key" json:"image_url" gorm:"size:4096"`
 		RandomKey string `json:"random_key"`
-		PersianName string `json:"name1"`
-		EnglishName string `json:"name2"`
-		MoreInfoUrl string `json:"more_info_url"`
-		WebClientAbsoluteUrl string `json:"web_client_absolute_url"`
+		PersianName string `json:"name1" gorm:"size:4096"`
+		EnglishName string `json:"name2" gorm:"size:4096"`
+		MoreInfoUrl string `json:"more_info_url" gorm:"size:4096"`
+		WebClientAbsoluteUrl string `json:"web_client_absolute_url" gorm:"size:4096"`
 		PriceText string `json:"price_text"`
 		PriceTextMode string `json:"price_text_mode"`
-		ShopText string `json:"shop_text"`
+		ShopText string `json:"shop_text" gorm:"size:4096"`
 	}
 
 	RuntimeInfo struct {
@@ -32,7 +32,7 @@ type (
 
 	SearchQuery struct {
 		ProductID int `gorm:"primary_key" json:"id"`
-		Title string `json:"title"`
+		Title string `json:"title" gorm:"size:4096"`
 		CreatedAt time.Time
 	}
 
@@ -58,8 +58,8 @@ type (
 		ShopName string `json:"shop_name"`
 		ShopLocation string `json:"shop_name2"`
 		ShopId int64 `json:"shop_id"`
-		PageUrl string `json:"page_url"`
-		DirectPageUrl string `json:"-"`
+		PageUrl string `json:"page_url" gorm:"size:4096"`
+		DirectPageUrl string `json:"-" gorm:"size:4096"`
 		SourceID string `json:"-"`
 		IDInSource string `json:"-"`
 		ShopScorePercentile float64 `json:"shop_score_percentile"`
