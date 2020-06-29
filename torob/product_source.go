@@ -50,7 +50,7 @@ func FillIDInSource(source *ProductSource) {
 
 func CheckForProductLinkPotential(product *Product) bool {
 	for index := range product.ProductsInfo.Result {
-		if product.ProductsInfo.Result[index].ShopId == 10 || product.ProductsInfo.Result[index].ShopName == "دیجیکالا" {
+		if product.ProductsInfo.Result[index].ShopId == 10 || strings.Contains(product.ProductsInfo.Result[index].ShopName, "دیجیکالا") {
 			return true
 		}
 	}
