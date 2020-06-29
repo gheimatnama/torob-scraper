@@ -18,7 +18,7 @@ func getSearchUrl(query string) string {
 
 func SearchByQuery(query string) []SearchItem {
 	searchResult := SearchResult{}
-	err := getJson(getSearchUrl(query), &searchResult)
+	err := getJson(getSearchUrl(query), &searchResult, true)
 	if err != nil {
 		log.Error("Error while searching query : " + query + " -- ", err)
 	}

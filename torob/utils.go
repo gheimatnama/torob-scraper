@@ -31,7 +31,7 @@ func getClient(useProxy bool) (*http.Client, *rotator.Proxy) {
 	return client, nil
 }
 
-func getJson(url string, target interface{}) error {
+func getJson(url string, target interface{}, useProxy bool) error {
 	CurrentRuntimeInfo.WorkerPool <- 1
 	defer func() {
 		<-CurrentRuntimeInfo.WorkerPool
@@ -40,13 +40,25 @@ func getJson(url string, target interface{}) error {
 
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Set("User-Agent", UAs[rand.Intn(3)])
-	client, proxy := getClient(true)
+	client, proxy := getClient(useProxy)
 	r, err := client.Do(req)
-	if err != nil {
+	retries := 0
+	for err != nil && retries < 3 {
+		retries++
+		log.Error("Proxy server didn't answer")
+		log.Info("Retrying")
+		r, err = client.Do(req)
+	}
+	if retries >= 3 {
 		if proxy != nil {
+			log.Info("Proxy is obviously dead")
 			proxy.MarkDead()
 		}
 		return err
+	}
+
+	if retries != 0 {
+		log.Info("Proxy Survived")
 	}
 	defer r.Body.Close()
 	return json.NewDecoder(r.Body).Decode(target)

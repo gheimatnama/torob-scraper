@@ -6,7 +6,7 @@ import (
 
 func ParseFromUrl(url string) *Product {
 	product := Product{}
-	err := getJson(url, &product)
+	err := getJson(url, &product, true)
 	if err != nil {
 		log.Error("Error while parsing product : " + url + " -- ", err)
 	}

@@ -12,9 +12,9 @@ func ParseSearchQueries(page int) ([]SearchQuery, int) {
 	log.Info("Parsing titles page ", page)
 	pagination := Pagination{}
 	var queries []SearchQuery
-	err := getJson(fmt.Sprintf("https://gheimatnama.ir/products/listNames?page=%d", page), &pagination)
+	err := getJson(fmt.Sprintf("https://gheimatnama.ir/products/listNames?page=%d", page), &pagination, false)
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 	}
 	for _, item := range pagination.Data {
 		queries = append(queries, SearchQuery{
