@@ -60,7 +60,7 @@ func GetRotator() *rotator.ProxyRotator {
 func main() {
 	db, err := gorm.Open("mysql", "root:root@/torobspider?charset=utf8mb4&parseTime=True&loc=Local")
 	if err != nil {
-		panic("failed to connect database")
+		panic("failed to connect database", err)
 	}
 	defer db.Close()
 	db.AutoMigrate(&torob.Product{})
